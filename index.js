@@ -34,6 +34,16 @@ app.get("/students", async (req, res) => {
 	})
 	res.send(docs)
 })
+app.get("/calendar", async (req, res) => {
+	console.log("getting all calendar events")
+	const collectionRef = collection(db, "calendar");
+	const collectionSnap = await getDocs(collectionRef)
+	const docs = []
+	collectionSnap.forEach((doc) => {
+		docs.push(doc.data())
+	})
+	res.send(docs)
+})
 
 // Add a new student
 app.post("/students", async (req, res) => {
@@ -47,6 +57,20 @@ app.post("/students", async (req, res) => {
 	}
 	res.status(200).send("Succesfully Created Student")
 })
+// Add a new calendar event
+app.post("/calendar", async (req, res) => {
+	const calendarRef = collection(db, "calendar");
+	const calendarBody = req.body
+	try {
+		await addDoc(calendarRef, calendarBody)
+	} catch (e) {
+		console.error(e)
+		res.status(500);
+	}
+	res.status(200).send("Succesfully Created Calendar Event")
+})
+
+
 
 function start() {
 	app.listen(port, () => {
@@ -55,3 +79,4 @@ function start() {
 }
 
 start()
+
